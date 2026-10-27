@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b6fa4">
+<title>桨板航线规划</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<style>
+  :root { --blue:#0b6fa4; --bg:#fff; --fg:#17212b; --muted:#667; --warn:#c0392b; --ok:#e08a00; }
+  * { box-sizing: border-box; }
+  html, body { height:100%; margin:0; font:14px/1.4 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--fg); }
+  #app { display:flex; flex-direction:column; height:100%; }
+  #bar { display:flex; flex-wrap:wrap; gap:6px; padding:8px; padding-top:calc(8px + env(safe-area-inset-top)); background:var(--blue); }
+  #bar button, #bar input { font:inherit; border:0; border-radius:6px; padding:7px 10px; }
+  #bar button { background:#fff; color:var(--blue); font-weight:600; }
+  #bar button.active { background:#ffd54a; color:#222; }
+  #bar button:disabled { opacity:.5; }
+  #search { flex:1 1 140px; min-width:0; }
+  #map { flex:1; min-height:0; }
+  #panel { max-height:42vh; overflow:auto; padding:10px 12px calc(10px + env(safe-area-inset-bottom)); background:var(--bg); border-top:1px solid #ddd; }
+  #status { margin:0 0 6px; color:var(--muted); }
+  #status.err { color:var(--warn); }
+  #summary { font-size:16px; font-weight:600; margin:0 0 6px; }
+  #summary label { font-weight:400; font-size:13px; color:var(--muted); }
+  #speed { width:56px; padding:2px 4px; }
+  ul#obs { list-style:none; margin:0; padding:0; }
+  ul#obs li { padding:6px 0; border-top:1px solid #eee; cursor:pointer; }
+  ul#obs li.portage b { color:var(--warn); }
+  ul#obs li.check b { color:var(--ok); }
+  .safety { margin:8px 0 0; font-size:12px; color:var(--muted); }
+  .pin { width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; color:#fff; font-weight:700; font-size:13px; line-height:26px; text-align:center; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.5); }
+  .pin.start { background:#1e9e4a; } .pin.end { background:#d63031; } .pin.via { background:#6c5ce7; }
+  .ob { width:22px; height:22px; margin:-11px 0 0 -11px; border-radius:4px; color:#fff; font-size:12px; line-height:22px; text-align:center; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.5); }
+  .ob.portage { background:var(--warn); } .ob.check { background:var(--ok); }
+  #layerBtn { position:absolute; right:10px; top:10px; z-index:500; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bar">
+    <input id="search" type="search" placeholder="搜索地名 / 河名后回车">
+    <button id="bStart">起点</button>
+    <button id="bEnd">终点</button>
+    <button id="bVia">途经点</button>
+    <button id="bClear">清除</button>
+    <button id="bGpx" disabled>导出 GPX</button>
+    <button id="bLayer">卫星图</button>
+  </div>
+  <div id="map"></div>
+  <div id="panel">
+    <p id="status">点“起点”,再在河道上点一下;然后点“终点”。</p>
+    <p id="summary" hidden>
+      <span id="dist"></span> · <span id="time"></span>
+      <label>速度 <input id="speed" type="number" min="1" max="10" step="0.5" value="3.5"> km/h</label>
+    </p>
+    <ul id="obs"></ul>
+    <p class="safety">⚠ 数据来自 OpenStreetMap,可能缺失或过时。水深、禁航区、水源保护区、泄洪和桥洞净空请自行核实;出发前查天气,穿救生衣、系脚绳,告知岸上的人。</p>
+  </div>
+</div>
+<script src="vendor/leaflet.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
